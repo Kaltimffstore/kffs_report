@@ -34,6 +34,7 @@ async function cariLaporan() {
       .from('laporan')
       .select('*')
       .or('id_akun.ilike.%' + query + '%,deskripsi.ilike.%' + query + '%')
+      .eq('status', 'verified')
       .order('created_at', { ascending: false });
 
     var laporan = result.data || [];
@@ -83,11 +84,12 @@ async function loadDetail(id) {
       .from('laporan')
       .select('*')
       .eq('id', id)
+      .eq('status', 'verified')
       .single();
 
     var data = result.data;
     if (result.error || !data) {
-      container.innerHTML = '<div class="alert alert-error">Laporan tidak ditemukan.</div><p style="text-align:center;margin-top:20px;"><a href="index.html" class="btn btn-primary">← Kembali</a></p>';
+      container.innerHTML = '<div class="alert alert-error">Laporan tidak ditemukan atau belum diverifikasi.</div><p style="text-align:center;margin-top:20px;"><a href="index.html" class="btn btn-primary">← Kembali</a></p>';
       return;
     }
 
@@ -143,7 +145,6 @@ async function uploadToCloudinary(file) {
 
 async function submitLaporan(event) {
   event.preventDefault();
-
   var honeypot = document.getElementById('honeypot');
   if (honeypot && honeypot.value !== '') return;
 
@@ -161,17 +162,15 @@ async function submitLaporan(event) {
       fotoUrls.push(url);
     }
 
-    var insertResult = await supabaseClient
-      .from('laporan')
-      .insert({
-        id_akun: document.getElementById('idAkun').value.trim(),
-        platform: document.getElementById('platform').value,
-        kategori: document.getElementById('kategori').value,
-        deskripsi: document.getElementById('deskripsi').value.trim(),
-        bukti_foto_urls: fotoUrls,
-        nama_pelapor: document.getElementById('namaPelapor').value.trim() || 'Anonim',
-        status: 'pending'
-      });
+    var insertResult = await supabaseClient.from('laporan').insert({
+      id_akun: document.getElementById('idAkun').value.trim(),
+      platform: document.getElementById('platform').value,
+      kategori: document.getElementById('kategori').value,
+      deskripsi: document.getElementById('deskripsi').value.trim(),
+      bukti_foto_urls: fotoUrls,
+      nama_pelapor: document.getElementById('namaPelapor').value.trim() || 'Anonim',
+      status: 'pending'
+    });
 
     if (insertResult.error) throw insertResult.error;
 
@@ -190,18 +189,11 @@ async function submitLaporan(event) {
 function previewFotos(input) {
   var preview = document.getElementById('previewFotos');
   if (!preview) return;
-
   var files = Array.from(input.files);
-  if (selectedFiles.length + files.length > 5) {
-    alert('Maksimal 5 foto!');
-    return;
-  }
+  if (selectedFiles.length + files.length > 5) { alert('Maksimal 5 foto!'); return; }
 
   files.forEach(function(file) {
-    if (file.size > 10 * 1024 * 1024) {
-      alert('"' + file.name + '" terlalu besar! Max 10MB.');
-      return;
-    }
+    if (file.size > 10 * 1024 * 1024) { alert('"' + file.name + '" terlalu besar! Max 10MB.'); return; }
     selectedFiles.push(file);
     var reader = new FileReader();
     reader.onload = function(e) {
