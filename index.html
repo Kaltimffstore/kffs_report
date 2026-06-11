@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KFFS REPORT - Database Laporan Akun Game</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav class="navbar">
+<a href="index.html" class="logo">KFFS <span class="logo-accent">REPORT</span></a>
+<ul class="nav-links">
+<li><a href="index.html">Beranda</a></li>
+<li><a href="lapor.html">Lapor</a></li>
+<li><a href="info.html">Info</a></li>
+<li><a href="admin.html">Admin</a></li>
+</ul>
+</nav>
+
+<section class="hero">
+<div class="hero-badge">🎮 DATABASE KOMUNITAS GAMING</div>
+<h1>KFFS REPORT</h1>
+<p>Platform database laporan penipuan akun game & informasi kesepakatan transaksi JB (Jual-Beli). Cek keamanan akun sebelum transaksi, lindungi diri kamu dari penipu!</p>
+</section>
+
+<div class="search-container">
+<div class="search-box">
+<input type="text" id="searchInput" placeholder="🔍 Masukkan ID akun, username, atau nomor..." onkeydown="if(event.key==='Enter') cariLaporan()">
+<button onclick="cariLaporan()">Cari Sekarang</button>
+</div>
+<p style="text-align:center;color:var(--text-muted);margin-top:12px;font-size:0.9rem;">Contoh: 84729103, player123, 08123456789</p>
+</div>
+
+<div class="quick-actions">
+<a href="lapor.html" class="action-btn primary">📝 Buat Laporan Baru</a>
+<a href="info.html" class="action-btn">ℹ️ Tentang KFFS</a>
+<a href="https://wa.me/+6283140534928" target="_blank" class="action-btn">💬 Hubungi Admin</a>
+</div>
+
+<div class="results-container" id="resultsContainer" style="display:none;">
+<div id="resultsInfo"></div>
+<div id="resultsList"></div>
+</div>
+
+<section class="sosmed-section">
+<div class="section-title">
+<h2>🌐 Sosmed Kami</h2>
+<p>Follow & join untuk update stok, testimoni, dan info terbaru!</p>
+</div>
+<div class="sosmed-grid">
+<a href="https://wa.me/+6283140534928" target="_blank" class="sosmed-card sosmed-wa">
+<div class="sosmed-icon">💬</div>
+<h3>WhatsApp</h3>
+<p>Chat Admin KFFS</p>
+</a>
+<a href="https://chat.whatsapp.com/FIdRPwtdzMvIStD9bSOwwX" target="_blank" class="sosmed-card sosmed-group">
+<div class="sosmed-icon">👥</div>
+<h3>Group WhatsApp</h3>
+<p>Join komunitas kami</p>
+</a>
+<a href="https://youtube.com/@KALTIMFF_STORE" target="_blank" class="sosmed-card sosmed-yt">
+<div class="sosmed-icon">▶️</div>
+<h3>YouTube</h3>
+<p>@KALTIMFF_STORE</p>
+</a>
+<a href="https://tiktok.com/@kaltimffstore" target="_blank" class="sosmed-card sosmed-tt">
+<div class="sosmed-icon">🎵</div>
+<h3>TikTok</h3>
+<p>@kaltimffstore</p>
+</a>
+<a href="https://www.instagram.com/kaltimff_store?igsh=b3h2bWFv" target="_blank" class="sosmed-card sosmed-ig">
+<div class="sosmed-icon">📷</div>
+<h3>Instagram</h3>
+<p>Testi + Stok Terlengkap</p>
+</a>
+</div>
+</section>
+
+<section class="garansi-section">
+<div class="section-title">
+<h2>📋 Informasi Kesepakatan Transaksi JB</h2>
+<p>Pahami jenis garansi sebelum melakukan transaksi akun game</p>
+</div>
+<div class="garansi-grid">
+
+<div class="garansi-card">
+<span class="garansi-badge full">REFULL</span>
+<h3>Garansi Penuh</h3>
+<div class="subtitle">Berlaku ke Pembeli Seterusnya</div>
+<p>REFULL adalah penjual menggaransikan akun yang dijual sepenuhnya kepada pembeli. Apabila akun tersebut bermasalah misalnya:</p>
+<ul><li>KeHackback</li><li>Nabrak</li><li>Kebanned</li></ul>
+<p style="margin-top:10px;"><strong>Maka Penjual WAJIB BERTANGGUNG JAWAB</strong> dalam bentuk pengembalian DANA sesuai nominal transaksi. Garansi ini berlaku ke pembeli seterusnya.</p>
+</div>
+
+<div class="garansi-card">
+<span class="garansi-badge">REFF PLAYER</span>
+<h3>Garansi Hanya ke Pembeli Pertama</h3>
+<div class="subtitle">Hanya ke Pembeli Pertama</div>
+<p>REFF PLAYER adalah penjual menggaransikan akun yang dijual hanya ke pembeli pertama. Apabila akun bermasalah (KeHackback, Nabrak, Kebanned), Penjual Wajib Bertanggung Jawab dalam bentuk pengembalian DANA sesuai nominal transaksi.</p>
+<p><strong>Garansi tidak berlaku lagi, apabila:</strong></p>
+<ul><li>Akun dijual ke pembeli ke dua / seterusnya</li><li>Email Moonton diubah setelah transaksi DONE</li></ul>
+</div>
+
+<div class="garansi-card">
+<span class="garansi-badge">REFF PLAYER BUYER</span>
+<h3>Garansi Sampai Pembeli ke-2</h3>
+<div class="subtitle">Berlaku hingga Pembeli ke-2</div>
+<p>Penjual menggaransikan akunya sampai ke pembeli ke-2. Apabila dikemudian hari akun mengalami: Nabrak, Kebanned, Kebegal, maka Penjual WAJIB BERTANGGUNG JAWAB pengembalian DANA sesuai nominal transaksi.</p>
+<p><strong>Garansi tidak berlaku lagi, apabila:</strong></p>
+<ul><li>Email Moonton diubah setelah transaksi DONE</li><li>Akun dijual ke pembeli ke-3 atau seterusnya</li></ul>
+</div>
+
+<div class="garansi-card">
+<span class="garansi-badge hb">REFULL HB</span>
+<h3>Garansi HB Only Tidak Terbatas</h3>
+<div class="subtitle">Khusus Hackback - Tidak Terbatas</div>
+<p>Penjual menggaransikan akunya sampai ke pembeli seterusnya (Tidak Terbatas) dan Garansi ini Khusus HB ONLY.</p>
+<p><strong>Garansi tidak berlaku lagi, apabila:</strong></p>
+<ul><li>Akun Nabrak / Keban</li><li>Akun kebegal Moonton</li></ul>
+</div>
+
+<div class="garansi-card">
+<span class="garansi-badge hb">REFF PLAYER HB</span>
+<h3>Garansi HB Only ke Pembeli Pertama</h3>
+<div class="subtitle">Khusus HB Only - Pembeli Pertama</div>
+<p>Penjual menggaransikan akunya hanya ke pembeli pertama & Garansi ini Khusus HB Only.</p>
+<p><strong>Garansi tidak berlaku lagi, apabila:</strong></p>
+<ul><li>Email Moonton diubah setelah transaksi DONE</li><li>Akun dijual ke pembeli ke-2</li><li>Akun Nabrak / keban, Akun kebegal Moonton</li></ul>
+</div>
+
+<div class="garansi-card">
+<span class="garansi-badge hb">REFF PLAYER HB KE BUYER 1X</span>
+<h3>Garansi HB Only Sampai Pembeli ke-2</h3>
+<div class="subtitle">Khusus HB Only - Sampai Pembeli ke-2</div>
+<p>Penjual menggaransikan akunya sampai ke pembeli ke-2 & Garansi ini Khusus HB Only.</p>
+<p><strong>Garansi tidak berlaku lagi, apabila:</strong></p>
+<ul><li>Email Moonton diubah setelah transaksi DONE</li><li>Akun dijual ke pembeli ke-3 atau seterusnya</li><li>Akun Nabrak / keban, Akun kebegal Moonton</li></ul>
+</div>
+
+<div class="garansi-card">
+<span class="garansi-badge noreff">NOREFF</span>
+<h3>Tanpa Garansi</h3>
+<div class="subtitle">No Refund - No Warranty</div>
+<p>Penjual tidak menggaransikan akun yang dijual. Jika akun bermasalah setelah transaksi selesai, maka diluar tanggung jawab penjual.</p>
+</div>
+
+</div>
+<p style="text-align:center;color:var(--text-muted);margin-top:30px;font-size:0.9rem;font-style:italic;">
+💡 Semua Garansi di atas masih berlaku jika ada kesepakatan lain antara penjual & pembeli secara pribadi.
+</p>
+</section>
+
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+<img id="lightboxImg" src="" alt="Bukti">
+</div>
+
+<footer class="footer">
+<div class="footer-brand">KFFS REPORT</div>
+<p>Database Laporan Penipuan Akun Game & Info JB</p>
+<div class="footer-sosmed">
+<a href="https://wa.me/+6283140534928" target="_blank">💬</a>
+<a href="https://chat.whatsapp.com/FIdRPwtdzMvIStD9bSOwwX" target="_blank">👥</a>
+<a href="https://youtube.com/@KALTIMFF_STORE" target="_blank">▶️</a>
+<a href="https://tiktok.com/@kaltimffstore" target="_blank">🎵</a>
+<a href="https://www.instagram.com/kaltimff_store?igsh=b3h2bWFv" target="_blank">📷</a>
+</div>
+<p style="margin-top:15px;">© 2026 KFFS

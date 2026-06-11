@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lapor Akun - KFFS REPORT</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav class="navbar">
+<a href="index.html" class="logo">KFFS <span class="logo-accent">REPORT</span></a>
+<ul class="nav-links">
+<li><a href="index.html">Beranda</a></li>
+<li><a href="lapor.html" style="color:var(--primary);">Lapor</a></li>
+<li><a href="info.html">Info</a></li>
+<li><a href="admin.html">Admin</a></li>
+</ul>
+</nav>
+
+<section class="hero">
+<div class="hero-badge">📝 FORM LAPORAN</div>
+<h1>Laporkan Akun Bermasalah</h1>
+<p>Laporan kamu akan diverifikasi admin sebelum dipublikasikan. Berikan bukti yang jelas!</p>
+</section>
+
+<div class="form-container" id="alertArea"></div>
+
+<div class="form-container">
+<form id="laporanForm" onsubmit="submitLaporan(event)">
+<div style="position:absolute;left:-9999px;" aria-hidden="true">
+<input type="text" name="website" id="honeypot" tabindex="-1" autocomplete="off">
+</div>
+
+<div class="form-group">
+<label>🆔 ID Akun / Username / Nomor *</label>
+<input type="text" id="idAkun" required placeholder="Contoh: 84729103">
+</div>
+
+<div class="form-group">
+<label>🎮 Platform Game *</label>
+<select id="platform" required>
+<option value="">-- Pilih Platform --</option>
+<option value="Mobile Legends">Mobile Legends</option>
+<option value="Free Fire">Free Fire</option>
+<option value="PUBG Mobile">PUBG Mobile</option>
+<option value="Genshin Impact">Genshin Impact</option>
+<option value="Valorant">Valorant</option>
+<option value="Honkai Star Rail">Honkai Star Rail</option>
+<option value="Steam">Steam</option>
+<option value="Roblox">Roblox</option>
+<option value="Lainnya">Lainnya</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>📂 Kategori Laporan *</label>
+<select id="kategori" required>
+<option value="">-- Pilih Kategori --</option>
+<option value="Penipuan Jual Akun">Penipuan Jual Akun</option>
+<option value="Penipuan Joki">Penipuan Joki</option>
+<option value="Penipuan Top Up">Penipuan Top Up</option>
+<option value="Scam Trade">Scam Trade</option>
+<option value="Akun Hack/Curian">Akun Hack/Curian</option>
+<option value="Hackback">Hackback</option>
+<option value="Toxic/Cheating">Toxic/Cheating</option>
+<option value="Lainnya">Lainnya</option>
+</select>
+</div>
+
+<div class="form-group">
+<label>📋 Kronologi / Deskripsi Lengkap *</label>
+<textarea id="deskripsi" required placeholder="Ceritakan detail kejadian. Sertakan bukti chat, transaksi, dll."></textarea>
+</div>
+
+<div class="form-group">
+<label>👤 Nama Pelapor (Opsional)</label>
+<input type="text" id="namaPelapor" placeholder="Kosongkan untuk Anonim">
+</div>
+
+<div class="form-group">
+<label>📸 Foto Bukti (Max 5 foto, max 10MB per foto)</label>
+<div class="file-upload" onclick="document.getElementById('fotoInput').click()">
+<input type="file" id="fotoInput" accept="image/*" multiple onchange="previewFotos(this)">
+<div class="upload-icon">📁</div>
+<p>Klik untuk pilih foto bukti</p>
+<p style="font-size:0.8rem;color:var(--text-muted);margin-top:5px;">Format: JPG, PNG, WEBP</p>
+</div>
+<div class="preview-fotos" id="previewFotos"></div>
+</div>
+
+<button type="submit" class="btn btn-primary" id="submitBtn" style="width:100%;justify-content:center;">📤 Kirim Laporan</button>
+<p style="text-align:center;color:var(--text-muted);font-size:0.8rem;margin-top:15px;">⚠️ Laporan akan diverifikasi admin.</p>
+</form>
+</div>
+
+<footer class="footer">
+<div class="footer-brand">KFFS REPORT</div>
+<p>© 2026 KFFS REPORT - KALTIM FF STORE
