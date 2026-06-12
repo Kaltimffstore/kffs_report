@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KFFS REPORT - Kaltimff Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0f172a',
+                        darker: '#0b0f19',
+                        neon: '#10b981',
+                        neonHover: '#059669'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0b0f19; color: #e2e8f0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .neon-glow { text-shadow: 0 0 10px rgba(16, 185, 129, 0.7); }
+        .neon-border { box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+        .tab-content { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-4 md:p-8">
+
+    <header class="w-full max-w-4xl text-center mb-8 pt-4">
+        <h1 class="text-4xl md:text-6xl font-bold text-neon neon-glow mb-3 tracking-wider">
+            <i class="fa-solid fa-shield-halved"></i> KFFS REPORT
+        </h1>
+        <p class="text-gray-400 text-sm md:text-base max-w-2xl mx-auto mb-4">
+            Database Pusat Pelaporan & Pengecekan Riwayat Transaksi Jual Beli Akun Game. 
+            Membangun ekosistem JB yang aman, terpercaya, dan bebas ripper bersama Kaltimff Store.
+        </p>
+    </header>
+
+    <div class="flex flex-wrap justify-center gap-3 mb-10 w-full max-w-4xl">
+        <a href="https://wa.me/+6283140534928" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-[#25D366]/10 text-[#25D366] border border-[#25D366]/50 rounded-full hover:bg-[#25D366] hover:text-white transition">
+            <i class="fa-brands fa-whatsapp text-lg"></i> Admin WA
+        </a>
+        <a href="https://chat.whatsapp.com/FIdRPwtdzMvIStD9bSOwwX" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-green-500/10 text-green-400 border border-green-500/50 rounded-full hover:bg-green-500 hover:text-white transition">
+            <i class="fa-solid fa-users text-lg"></i> Grup WA
+        </a>
+        <a href="https://www.instagram.com/kaltimff_store?igsh=b3h2bWFv" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-pink-500/10 text-pink-400 border border-pink-500/50 rounded-full hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 hover:text-white transition">
+            <i class="fa-brands fa-instagram text-lg"></i> Testi & Stok
+        </a>
+        <a href="https://youtube.com/@KALTIMFF_STORE" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-red-500/10 text-red-400 border border-red-500/50 rounded-full hover:bg-red-600 hover:text-white transition">
+            <i class="fa-brands fa-youtube text-lg"></i> YouTube
+        </a>
+        <a href="https://tiktok.com/@kaltimffstore" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-gray-500/10 text-gray-300 border border-gray-500/50 rounded-full hover:bg-gray-800 hover:text-white transition">
+            <i class="fa-brands fa-tiktok text-lg"></i> TikTok
+        </a>
+    </div>
+
+    <main class="w-full max-w-4xl relative">
+        
+        <div class="grid grid-cols-3 gap-2 md:gap-4 mb-8">
+            <button onclick="switchTab('search')" class="glass-panel text-white py-3 rounded-xl text-sm md:text-lg font-bold hover:bg-neon hover:text-dark transition neon-border flex flex-col items-center gap-1">
+                <i class="fa-solid fa-magnifying-glass text-xl"></i> Cek Data
+            </button>
+            <button onclick="switchTab('report')" class="glass-panel text-white py-3 rounded-xl text-sm md:text-lg font-bold hover:bg-red-600 hover:text-white transition neon-border flex flex-col items-center gap-1">
+                <i class="fa-solid fa-triangle-exclamation text-xl"></i> Lapor
+            </button>
+            <button onclick="switchTab('admin-login')" class="glass-panel text-white py-3 rounded-xl text-sm md:text-lg font-bold hover:bg-blue-600 hover:text-white transition neon-border flex flex-col items-center gap-1">
+                <i class="fa-solid fa-user-shield text-xl"></i> Admin
+            </button>
+        </div>
+
+        <div id="tab-search" class="tab-content active glass-panel p-6 md:p-8 rounded-2xl mb-12">
+            <h2 class="text-2xl font-bold text-neon mb-4"><i class="fa-solid fa-search"></i> Cek Keamanan Akun/Orang</h2>
+            <p class="text-sm text-gray-400 mb-4">Mencari riwayat ID game, nama, atau username penipu/ripper yang valid dan sudah di-ACC Admin.</p>
+            <div class="flex gap-2 mb-6">
+                <input type="text" id="searchInput" placeholder="Masukkan ID Game / No WA / Nickname..." class="w-full bg-darker border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon">
+                <button onclick="searchData()" class="bg-neon text-dark font-bold px-6 py-3 rounded-lg hover:bg-neonHover transition">Cari</button>
+            </div>
+            <div id="searchResult" class="space-y-4"></div>
+        </div>
+
+        <div id="tab-report" class="tab-content glass-panel p-6 md:p-8 rounded-2xl mb-12">
+            <h2 class="text-2xl font-bold text-red-400 mb-4"><i class="fa-solid fa-file-shield"></i> Form Pelaporan</h2>
+            <div class="bg-yellow-500/10 border border-yellow-500 text-yellow-400 p-3 rounded-lg mb-4 text-sm">
+                <i class="fa-solid fa-circle-info"></i> Laporan Anda akan ditinjau oleh Admin terlebih dahulu (Pending) sebelum masuk ke database pencarian publik.
+            </div>
+            <form id="reportForm" onsubmit="submitReport(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-1">Nickname / ID / No WA Pelaku</label>
+                    <input type="text" id="repName" required class="w-full bg-darker border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-500" placeholder="Contoh: Ari - ID: 2938472 (FF) - WA: 083140...">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-1">Kronologi / Kasus</label>
+                    <textarea id="repKasus" required rows="3" class="w-full bg-darker border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-500" placeholder="Jelaskan detail kasusnya (Nabrak/HB/Ripper transaksi)..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-400 mb-1">Bukti SS (Max 5MB)</label>
+                    <input type="file" id="repBukti" accept="image/*" required class="w-full bg-darker border border-gray-700 rounded-lg px-4 py-2 text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-500 file:text-white hover:file:bg-red-600">
+                </div>
+                <button type="submit" id="btnSubmit" class="w-full bg-red-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-red-700 transition mt-4">
+                    Kirim Laporan
+                </button>
+                <div id="loadingStatus" class="hidden text-center text-yellow-400 text-sm mt-2"><i class="fa-solid fa-spinner fa-spin"></i> Sedang memproses...</div>
+            </form>
+        </div>
+
+        <div id="tab-admin-login" class="tab-content glass-panel p-6 md:p-8 rounded-2xl mb-12 text-center max-w-md mx-auto">
+            <h2 class="text-2xl font-bold text-blue-400 mb-4"><i class="fa-solid fa-lock"></i> Akses Admin</h2>
+            <p class="text-sm text-gray-400 mb-6">Masukkan kode rahasia untuk masuk ke panel persetujuan laporan.</p>
+            <input type="password" id="adminPassword" placeholder="Password Admin..." class="w-full bg-darker border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 mb-4 text-center">
+            <button onclick="loginAdmin()" class="w-full bg-blue-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-blue-700 transition">
+                Masuk
+            </button>
+            <p id="adminError" class="text-red-500 text-sm mt-3 hidden">Password Salah!</p>
+        </div>
+
+        <div id="tab-admin-dash" class="tab-content glass-panel p-6 md:p-8 rounded-2xl mb-12 border-t-4 border-t-blue-500">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-blue-400"><i class="fa-solid fa-user-gear"></i> Panel Admin (Pending Reports)</h2>
+                <button onclick="logoutAdmin()" class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button>
+            </div>
+            <div id="adminDataList" class="space-y-4">
+                <p class="text-gray-400 text-center"><i class="fa-solid fa-spinner fa-spin"></i> Memuat laporan masuk...</p>
+            </div>
+        </div>
+
+        <section class="glass-panel p-6 md:p-8 rounded-2xl border-t-4 border-t-neon">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-white mb-2"><i class="fa-solid fa-handshake"></i> INFORMASI KESEPAKATAN</h2>
+                <p class="text-neon tracking-widest text-sm font-semibold">TRANSAKSI JUAL BELI (JB) KALTIMFF STORE</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-darker p-5 rounded-xl border border-gray-800">
+                    <h3 class="text-xl font-bold text-emerald-400 mb-1">REFULL</h3>
+                    <p class="text-xs text-gray-400 mb-3 border-b border-gray-700 pb-2">Garansi Penuh - Berlaku ke Pembeli Seterusnya</p>
+                    <p class="text-sm text-gray-300">REFULL adalah penjual menggaransikan akun yang dijual sepenuhnya kepada pembeli. Apabila akun tersebut bermasalah misalnya: keHackback, Nabrak, Kebanned. Maka Penjual WAJIB BERTANGGUNG JAWAB dalam bentuk pengembalian DANA sesuai nominal transaksi. Garansi ini berlaku ke pembeli seterusnya.</p>
+                </div>
+
+                <div class="bg-darker p-5 rounded-xl border border-gray-800">
+                    <h3 class="text-xl font-bold text-blue-400 mb-1">REFF PLAYER</h3>
+                    <p class="text-xs text-gray-400 mb-3 border-b border-gray-700 pb-2">Garansi Hanya ke Pembeli Pertama</p>
+                    <p class="text-sm text-gray-300 mb-2">REFF PLAYER adalah penjual menggaransikan akun yang dijual hanya ke pembeli pertama. Apabila akun tersebut bermasalah misalnya: keHackback, Nabrak, Kebanned. Maka Penjual Wajib Bertanggung Jawab dalam bentuk pengembalian DANA sesuai nominal transaksi.</p>
+                    <p class="text-xs text-red-400 font-semibold">Garansi ini tidak berlaku lagi, apabila:</p>
+                    <ul class="text-xs text-gray-400 list-disc pl-4">
+                        <li>Akun dijual kepembeli ke dua / seterusnya</li>
+                        <li>Email Moonton diubah setelah transaksi DONE</li>
+                    </ul>
+                </div>
+
+                <div class="bg-darker p-5 rounded-xl border border-gray-800">
+                    <h3 class="text-xl font-bold text-purple-400 mb-1">REFF PLAYER BUYER</h3>
+                    <p class="text-xs text-gray-400 mb-3 border-b border-gray-700 pb-2">Garansi Sampai Pembeli ke-2</p>
+                    <p class="text-sm text-gray-300 mb-2">Penjual menggaransikan akunya sampai ke pembeli ke-2. Apabila dikemudian hari akun mengalami: Nabrak, Kebanned, KebegaL. Maka Penjual WAJIB BERTANGGUNG JAWAB dalam bentuk pengembalian DANA sesuai nominal transaksi.</p>
+                    <p class="text-xs text-red-400 font-semibold">Garansi ini tidak berlaku lagi, apabila:</p>
+                    <ul class="text-xs text-gray-400 list-disc pl-4">
+                        <li>Email monton diubah setelah transaksi DONE</li>
+                        <li>Akun dijual ke pembeli ke-3 atau seterusnya</li>
+                    </ul>
+                </div>
+
+                <div class="bg-darker p-5 rounded-xl border border-gray-800">
+                    <h3 class="text-xl font-bold text-yellow-400 mb-1">REFULL HB</h3>
+                    <p class="text-xs text-gray-400 mb-3 border-b border-gray-700 pb-2">Garansi HB Only Tidak Terbatas</p>
+                    <p class="text-sm text-gray-300 mb-2">Penjual menggaransikan akunya sampai ke pembeli seterusnya (Tidak Terbatas) dan Garansi ini Khusus HB ONLY.</p>
+                    <p class="text-xs text-red-400 font-semibold">Garansi ini tidak berlaku lagi, apabila:</p>
+                    <ul class="text-xs text-gray-400 list-disc pl-4">
+                        <li>Akun Nabrak/Keban, Akun kebegal moonton</li>
+                    </ul>
+                </div>
+
+                <div class="bg-darker p-5 rounded-xl border border-gray-800">
+                    <h3 class="text-xl font-bold text-orange-400 mb-1">REFF PLAYER HB</h3>
+                    <p class="text-xs text-gray-400 mb-3 border-b border-gray-700 pb-2">Garansi HB Only ke Pembeli Pertama</p>
+                    <p class="text-sm text-gray-300 mb-2">Penjual menggaransikan akunya hanya ke pembeli pertama & Garansi ini Khusus HB Only.</p>
+                    <p class="text-xs text-red-400 font-semibold">Garansi ini tidak berlaku lagi, apabila:</p>
+                    <ul class="text-xs text-gray-400 list-disc pl-4">
+                        <li>Email monton diubah setelah transaksi DONE</li>
+                        <li>Akun dijual ke pembeli ke-2</li>
+                        <li>Akun Nabrak / keban, Akun kebegal moonton</li>
+                    </ul>
+                </div>
+
+                <div class="bg-darker p-5 rounded-xl border border-gray-800">
+                    <h3 class="text-xl font-bold text-indigo-400 mb-1">REFF PLAYER HB KE BUYER 1X</h3>
+                    <p class="text-xs text-gray-400 mb-3 border-b border-gray-700 pb-2">Garansi HB Only Sampai Pembeli ke-2</p>
+                    <p class="text-sm text-gray-300 mb-2">Penjual menggaransikan akunya sampai ke pembeli ke-2 & Garansi ini Khusus HB Only.</p>
+                    <p class="text-xs text-red-400 font-semibold">Garansi ini tidak berlaku lagi, apabila:</p>
+                    <ul class="text-xs text-gray-400 list-disc pl-4">
+                        <li>Email monton diubah setelah transaksi DONE</li>
+                        <li>Akun dijual ke pembeli ke-3 atau seterusnya</li>
+                        <li>Akun Nabrak/ keban, Akun kebegal moonton</li>
+                    </ul>
+                </div>
+
+                <div class="bg-darker p-5 rounded-xl border border-red-900/50 md:col-span-2">
+                    <h3 class="text-xl font-bold text-red-500 mb-1">NOREFF</h3>
+                    <p class="text-xs text-gray-400 mb-3 border-b border-gray-700 pb-2">Tanpa Garansi</p>
+                    <p class="text-sm text-gray-300">Penjual tidak menggaransikan akun yang dijual. Jika akun bermasalah setelah transaksi selesai, maka diluar tanggung jawab penjual.</p>
+                </div>
+            </div>
+            
+            <p class="text-center text-xs text-gray-500 mt-6 italic">
+                *Semua Garansi diatas masih berlaku jika ada kesepakatan lain antara penjual & pembeli secara pribadi.
+            </p>
+        </section>
+    </main>
+
+    <footer class="mt-12 py-6 text-center text-gray-600 text-sm w-full">
+        <p>&copy; 2026 KFFS REPORT | Master Ari. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // ==========================================
+        // 1. KONEKSI KE DATA SUPABASE & CLOUDINARY
+        // ==========================================
+        const SUPABASE_URL = 'https://eharexosgyuwuilxcvwx.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVoYXJleG9zZ3l1d3VpbHhjdnd4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEwODY3OTQsImV4cCI6MjA5NjY2Mjc5NH0.k3O9GgKuGW8GDVuvqTNTRiJGNf5yCxTzDLTAaYgBGUs';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dn7ya5fap/image/upload';
+        const CLOUDINARY_UPLOAD_PRESET = 'kffs_preset';
+
+        // PASSWORD PANEL ADMIN (Ganti sesukamu)
+        const KATA_SANDI_ADMIN = "masterari77"; 
+
+        // ==========================================
+        // 2. NAVIGASI TAB MENU
+        // ==========================================
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            if(tabId === 'admin-dash') loadAdminData();
+        }
+
+        // ==========================================
+        // 3. PROSES SUBMIT PELAPORAN (STATUS: PENDING)
+        // ==========================================
+        async function submitReport(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmit');
+            const loading = document.getElementById('loadingStatus');
+            const name = document.getElementById('repName').value;
+            const kasus = document.getElementById('repKasus').value;
+            const fileInput = document.getElementById('repBukti').files[0];
+
+            btn.disabled = true; loading.classList.remove('hidden');
+            loading.innerText = "Mengunggah gambar bukti ke Cloudinary...";
+
+            try {
+                const formData = new FormData();
+                formData.append('file', fileInput);
+                formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+                const cloudRes = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
+                const cloudData = await cloudRes.json();
+                
+                if (!cloudData.secure_url) throw new Error("Gagal mengunggah gambar. Pastikan Unsigned Preset Cloudinary sudah benar.");
+
+                loading.innerText = "Mengirim data laporan ke antrean admin...";
+                const { error } = await supabaseClient.from('reports').insert([{ 
+                    nickname: name, 
+                    kasus: kasus, 
+                    bukti_url: cloudData.secure_url 
+                }]);
+
+                if (error) throw error;
+
+                alert("Laporan Terkirim! Mohon tunggu proses pengecekan dan ACC dari Admin.");
+                document.getElementById('reportForm').reset();
+                switchTab('search');
+
+            } catch (err) {
+                alert("Error: " + err.message);
+            } finally {
+                btn.disabled = false; loading.classList.add('hidden');
+            }
+        }
+
+        // ==========================================
+        // 4. FITUR PENCARIAN (HANYA MUNCUL JIKA STATUS APPROVED)
+        // ==========================================
+        async function searchData() {
+            const input = document.getElementById('searchInput').value.trim();
+            const resultDiv = document.getElementById('searchResult');
+            
+            if (!input) return resultDiv.innerHTML = `<p class="text-gray-400 text-center py-4">Masukkan ID atau Nickname untuk mencari.</p>`;
+            resultDiv.innerHTML = `<p class="text-yellow-400 text-center py-4"><i class="fa-solid fa-spinner fa-spin"></i> Memeriksa database KFFS...</p>`;
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('reports')
+                    .select('*')
+                    .ilike('nickname', `%${input}%`)
+                    .eq('status', 'approved')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (data.length === 0) {
+                    resultDiv.innerHTML = `
+                        <div class="bg-green-500/10 border border-green-500 text-green-400 p-5 rounded-xl text-center neon-border">
+                            <i class="fa-solid fa-shield-check text-3xl mb-2"></i><br>
+                            Data <b>${input}</b> BERSIH!<br><span class="text-xs text-gray-400">Tidak ada riwayat buruk atau laporan penipuan yang tervalidasi.</span>
+                        </div>`;
+                } else {
+                    let html = `
+                        <div class="bg-red-500/10 border border-red-500 text-red-400 p-3 rounded-lg mb-4 text-center font-bold animate-pulse">
+                            <i class="fa-solid fa-triangle-exclamation"></i> WASPADA! Ditemukan ${data.length} data laporan penipuan terverifikasi!
+                        </div>`;
+                    
+                    data.forEach(item => {
+                        html += `
+                        <div class="bg-darker border border-gray-700 p-4 rounded-xl flex flex-col md:flex-row gap-4 mb-3">
+                            <a href="${item.bukti_url}" target="_blank" class="w-full md:w-36 h-36 flex-shrink-0">
+                                <img src="${item.bukti_url}" class="w-full h-full object-cover rounded-lg border border-gray-600 hover:border-red-500 transition" alt="Bukti Kasus">
+                            </a>
+                            <div class="flex-1">
+                                <h4 class="text-xl font-bold text-white mb-1">ID/Nick: <span class="text-red-400">${item.nickname}</span></h4>
+                                <p class="text-xs text-gray-500 mb-2"><i class="fa-regular fa-calendar"></i> Tanggal Validasi: ${new Date(item.created_at).toLocaleDateString('id-ID')}</p>
+                                <div class="bg-dark p-3 rounded border border-gray-800 text-sm text-gray-300">
+                                    <span class="text-gray-500 text-xs block mb-1">Kronologi Kejadian:</span>
+                                    ${item.kasus}
+                                </div>
+                            </div>
+                        </div>`;
+                    });
+                    resultDiv.innerHTML = html;
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `<p class="text-red-500 text-center py-4">Gagal terhubung ke database server.</p>`;
+            }
+        }
+
+        // ==========================================
+        // 5. SISTEM LOGIN & WORKFLOW ADMIN PANEL
+        // ==========================================
+        function loginAdmin() {
+            const pass = document.getElementById('adminPassword').value;
+            if(pass === KATA_SANDI_ADMIN) {
+                document.getElementById('adminPassword').value = '';
+                document.getElementById('adminError').classList.add('hidden');
+                switchTab('admin-dash');
+            } else {
+                document.getElementById('adminError').classList.remove('hidden');
+            }
+        }
+
+        function logoutAdmin() {
+            switchTab('admin-login');
+        }
+
+        async function loadAdminData() {
+            const list = document.getElementById('adminDataList');
+            list.innerHTML = `<p class="text-yellow-400 text-center py-4"><i class="fa-solid fa-spinner fa-spin"></i> Memuat antrean laporan masuk...</p>`;
+            
+            try {
+                const { data, error } = await supabaseClient
+                    .from('reports')
+                    .select('*')
+                    .eq('status', 'pending')
+                    .order('created_at', { ascending: true });
+
+                if (error) throw error;
+
+                if (data.length === 0) {
+                    list.innerHTML = `<p class="text-green-400 text-center py-6"><i class="fa-solid fa-circle-check"></i> Semua laporan masuk sudah ditinjau. Antrean kosong!</p>`;
+                    return;
+                }
+
+                let html = '';
+                data.forEach(item => {
+                    html += `
+                    <div class="bg-dark border border-gray-700 p-4 rounded-xl flex flex-col md:flex-row gap-4 items-center">
+                        <a href="${item.bukti_url}" target="_blank" class="w-24 h-24 flex-shrink-0">
+                            <img src="${item.bukti_url}" class="w-full h-full object-cover rounded-lg border border-gray-600">
+                        </a>
+                        <div class="flex-1 w-full">
+                            <h4 class="font-bold text-white text-lg">Target: <span class="text-yellow-400">${item.nickname}</span></h4>
+                            <p class="text-sm text-gray-300 my-1 bg-darker p-2 rounded border border-gray-800">${item.kasus}</p>
+                            <div class="flex gap-2 mt-2">
+                                <button onclick="accReport(${item.id})" class="bg-emerald-600 text-white font-semibold px-4 py-1.5 rounded hover:bg-emerald-700 text-sm transition"><i class="fa-solid fa-check"></i> ACC Publik</button>
+                                <button onclick="tolakReport(${item.id})" class="bg-red-600 text-white font-semibold px-4 py-1.5 rounded hover:bg-red-700 text-sm transition"><i class="fa-solid fa-xmark"></i> Tolak & Hapus</button>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+                list.innerHTML = html;
+
+            } catch(err) {
+                list.innerHTML = `<p class="text-red-500 text-center py-4">Gagal memuat data panel admin.</p>`;
+            }
+        }
+
+        async function accReport(id) {
+            if(!confirm("Apakah Anda yakin ingin menyetujui (ACC) laporan ini agar bisa dicari publik?")) return;
+            const { error } = await supabaseClient.from('reports').update({ status: 'approved' }).eq('id', id);
+            if(error) alert("Gagal meng-ACC: " + error.message);
+            else loadAdminData();
+        }
+
+        async function tolakReport(id) {
+            if(!confirm("Apakah Anda yakin ingin menolak dan menghapus permanen laporan ini?")) return;
+            const { error } = await supabaseClient.from('reports').delete().eq('id', id);
+            if(error) alert("Gagal menghapus: " + error.message);
+            else loadAdminData();
+        }
+    </script>
+</body>
+</html>
