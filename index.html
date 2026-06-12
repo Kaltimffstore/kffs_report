@@ -40,7 +40,7 @@
         .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center p-4 md:p-6">
+<body class="min-h-screen flex flex-col items-center p-4 md:p-6 relative">
 
     <!-- HEADER SECTION -->
     <header class="w-full max-w-4xl text-center mb-6 pt-4 relative z-10">
@@ -49,10 +49,10 @@
         </h1>
         <p class="text-gray-400 text-sm md:text-base max-w-2xl mx-auto mb-6 leading-relaxed">
             Database Pusat Pelaporan & Pengecekan Riwayat Transaksi Jual Beli Akun Game. 
-            Membangun ekosistem JB yang aman, terpercaya, dan bebas ripper.
+            Membangun ekosistem JB yang aman, terpercaya, dan bebas ripper bersama Kaltimff Store.
         </p>
 
-        <!-- SOSMED RESMI KFFS (RAPI & KEREN) -->
+        <!-- SOSMED RESMI KFFS -->
         <div class="glass-panel max-w-3xl mx-auto rounded-2xl p-4 md:p-5 border-t-2 border-t-neon/50">
             <h3 class="text-xs uppercase tracking-widest text-neon font-bold mb-4 opacity-80"><i class="fa-solid fa-share-nodes"></i> Sosmed Resmi KFFS</h3>
             <div class="flex flex-wrap justify-center gap-3">
@@ -93,9 +93,9 @@
 
         <!-- TAB 1: SEARCH (PUBLIK) -->
         <div id="tab-search" class="tab-content active glass-panel p-5 md:p-8 rounded-2xl mb-12 shadow-2xl">
-            <h2 class="text-xl md:text-2xl font-bold text-neon mb-2"><i class="fa-solid fa-search"></i> Cek Keamanan Akun</h2>
+            <h2 class="text-xl md:text-2xl font-bold text-neon mb-2"><i class="fa-solid fa-search"></i> Cek Keamanan Akun/Orang</h2>
             <p class="text-xs md:text-sm text-gray-400 mb-5 border-b border-gray-700 pb-4">
-                Mencari riwayat ID game, nama, atau no WA penipu yang valid dan sudah di-ACC Admin & MC.
+                Mencari riwayat ID game, nama, atau username penipu/ripper yang valid dan sudah di-ACC Admin.
             </p>
             <div class="flex flex-col md:flex-row gap-2 mb-6">
                 <input type="text" id="searchInput" placeholder="Contoh: 1341822083 (15524) atau nama..." class="w-full bg-darker border border-gray-700 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-neon text-sm placeholder-gray-500">
@@ -104,7 +104,6 @@
                 </button>
             </div>
             
-            <!-- Tempat Hasil Pencarian -->
             <div id="searchResult" class="space-y-4"></div>
         </div>
 
@@ -139,11 +138,11 @@
 
         <!-- TAB 3: ADMIN LOGIN -->
         <div id="tab-admin-login" class="tab-content glass-panel p-6 md:p-8 rounded-2xl mb-12 max-w-md mx-auto shadow-2xl border-t-2 border-t-blue-500/50">
-            <h2 class="text-2xl font-bold text-blue-400 mb-2 text-center"><i class="fa-solid fa-lock"></i> Akses Admin</h2>
-            <p class="text-xs text-gray-400 mb-6 text-center">Login via Supabase Auth System.</p>
+            <h2 class="text-2xl font-bold text-blue-400 mb-2 text-center"><i class="fa-solid fa-lock"></i> Akses Admin Resmi</h2>
+            <p class="text-xs text-gray-400 mb-6 text-center">Silakan masuk menggunakan Email & Password Admin Supabase.</p>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-xs text-gray-400 mb-1">Email KFFS</label>
+                    <label class="block text-xs text-gray-400 mb-1">Email Admin</label>
                     <input type="email" id="adminEmail" placeholder="admin@kffs.com" class="w-full bg-darker border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 text-sm">
                 </div>
                 <div>
@@ -151,77 +150,146 @@
                     <input type="password" id="adminPassword" placeholder="••••••••" class="w-full bg-darker border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 text-sm">
                 </div>
                 <button onclick="loginAdmin()" id="btnAdminLogin" class="w-full bg-blue-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-blue-700 transition mt-2 shadow-[0_0_15px_rgba(37,99,235,0.4)]">
-                    Masuk
+                    Masuk ke Panel
                 </button>
                 <p id="adminError" class="text-red-500 text-xs text-center hidden mt-2 bg-red-500/10 py-2 rounded"></p>
             </div>
         </div>
 
-        <!-- TAB 4: ADMIN DASHBOARD (Tersembunyi) -->
+        <!-- TAB 4: ADMIN DASHBOARD -->
         <div id="tab-admin-dash" class="tab-content glass-panel p-5 md:p-8 rounded-2xl mb-12 border-t-2 border-t-blue-500 shadow-2xl">
             <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
-                <h2 class="text-lg md:text-2xl font-bold text-blue-400"><i class="fa-solid fa-user-gear"></i> Antrean Pending</h2>
+                <h2 class="text-lg md:text-2xl font-bold text-blue-400"><i class="fa-solid fa-user-gear"></i> Panel Admin (Pending Reports)</h2>
                 <button onclick="logoutAdmin()" class="bg-red-500/20 border border-red-500 text-red-400 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-red-600 hover:text-white transition"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button>
             </div>
             <div id="adminDataList" class="space-y-4">
-                <p class="text-gray-400 text-center text-sm py-4"><i class="fa-solid fa-spinner fa-spin"></i> Memuat data server...</p>
+                <p class="text-gray-400 text-center text-sm py-4"><i class="fa-solid fa-spinner fa-spin"></i> Memuat antrean laporan masuk...</p>
             </div>
         </div>
 
         <!-- KESEPAKATAN TRANSAKSI JB -->
-        <section class="glass-panel p-6 md:p-8 rounded-2xl border-t-2 border-t-neon shadow-2xl">
+        <section class="glass-panel p-6 md:p-8 rounded-2xl border-t-2 border-t-neon shadow-2xl mb-12">
             <div class="text-center mb-8 border-b border-gray-700 pb-6">
                 <h2 class="text-2xl md:text-3xl font-extrabold text-white mb-2"><i class="fa-solid fa-handshake-simple text-neon"></i> INFORMASI KESEPAKATAN</h2>
                 <p class="text-neon tracking-widest text-xs md:text-sm font-semibold uppercase">Transaksi Jual Beli (JB) Kaltimff Store</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="grid grid-cols-1 gap-5">
+                <!-- REFULL -->
                 <div class="bg-darker p-5 rounded-xl border border-gray-800 hover:border-emerald-500/50 transition relative overflow-hidden group">
                     <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500"></div>
                     <h3 class="text-lg font-bold text-emerald-400 mb-1">REFULL</h3>
-                    <p class="text-[11px] text-gray-400 mb-2 border-b border-gray-700 pb-2 uppercase tracking-wide">Garansi Penuh - Seterusnya</p>
-                    <p class="text-xs text-gray-300 leading-relaxed">Penjual menggaransikan akun yang dijual sepenuhnya. Apabila bermasalah (Hackback, Nabrak, Banned) Penjual WAJIB BERTANGGUNG JAWAB pengembalian DANA sesuai nominal. Berlaku ke pembeli seterusnya.</p>
+                    <p class="text-[11px] text-gray-400 mb-3 border-b border-gray-700 pb-2 uppercase tracking-wide">Garansi Penuh - Berlaku ke Pembeli Seterusnya</p>
+                    <div class="text-sm text-gray-300 leading-relaxed space-y-2">
+                        <p>REFULL adalah penjual menggaransikan akun yang dijual sepenuhnya kepada pembeli. Apabila akun tersebut bermasalah misalnya: keHackback, Nabrak, Kebanned. Maka Penjual WAJIB BERTANGGUNG JAWAB dalam bentuk pengembalian DANA sesuai nominal transaksi. Garansi ini berlaku ke pembeli seterusnya.</p>
+                    </div>
                 </div>
+
+                <!-- REFF PLAYER -->
                 <div class="bg-darker p-5 rounded-xl border border-gray-800 hover:border-blue-500/50 transition relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
                     <h3 class="text-lg font-bold text-blue-400 mb-1">REFF PLAYER</h3>
-                    <p class="text-[11px] text-gray-400 mb-2 border-b border-gray-700 pb-2 uppercase tracking-wide">Garansi Pembeli Pertama</p>
-                    <p class="text-xs text-gray-300 leading-relaxed">Garansi hanya ke pembeli pertama. Hangus apabila: Akun dijual ke pembeli ke-2 / Email Moonton diubah setelah transaksi DONE.</p>
+                    <p class="text-[11px] text-gray-400 mb-3 border-b border-gray-700 pb-2 uppercase tracking-wide">Garansi Hanya ke Pembeli Pertama</p>
+                    <div class="text-sm text-gray-300 leading-relaxed space-y-2">
+                        <p>REFF PLAYER adalah penjual menggaransikan akun yang dijual hanya ke pembeli pertama. Apabila akun tersebut bermasalah misalnya: keHackback, Nabrak, Kebanned. Maka Penjual Wajib Bertanggung Jawab dalam bentuk pengembalian DANA sesuai nominal transaksi.</p>
+                        <p>Garansi ini tidak berlaku lagi, apabila:</p>
+                        <ul class="list-disc pl-5 text-gray-400 space-y-1">
+                            <li>Akun dijual kepembeli ke dua / seterusnya</li>
+                            <li>Email Moonton diubah setelah transaksi DONE</li>
+                        </ul>
+                    </div>
                 </div>
+
+                <!-- REFF PLAYER BUYER -->
                 <div class="bg-darker p-5 rounded-xl border border-gray-800 hover:border-purple-500/50 transition relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
                     <h3 class="text-lg font-bold text-purple-400 mb-1">REFF PLAYER BUYER</h3>
-                    <p class="text-[11px] text-gray-400 mb-2 border-b border-gray-700 pb-2 uppercase tracking-wide">Garansi Sampai Pembeli ke-2</p>
-                    <p class="text-xs text-gray-300 leading-relaxed">Garansi sampai ke pembeli ke-2. Hangus apabila: Email diubah setelah transaksi DONE / Akun dijual ke pembeli ke-3 atau seterusnya.</p>
+                    <p class="text-[11px] text-gray-400 mb-3 border-b border-gray-700 pb-2 uppercase tracking-wide">Garansi Sampai Pembeli ke-2</p>
+                    <div class="text-sm text-gray-300 leading-relaxed space-y-2">
+                        <p>Penjual menggaransikan akunya sampai ke pembeli ke-2. Apabila dikemudian hari akun mengalami: Nabrak, Kebanned, KebegaL. Maka Penjual WAJIB BERTANGGUNG JAWAB dalam bentuk pengembalian DANA sesuai nominal transaksi.</p>
+                        <p>Garansi ini tidak berlaku lagi, apabila:</p>
+                        <ul class="list-disc pl-5 text-gray-400 space-y-1">
+                            <li>Email monton diubah setelah transaksi DONE</li>
+                            <li>Akun dijual ke pembeli ke-3 atau seterusnya</li>
+                        </ul>
+                    </div>
                 </div>
+
+                <!-- REFULL HB -->
                 <div class="bg-darker p-5 rounded-xl border border-gray-800 hover:border-yellow-500/50 transition relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-1 h-full bg-yellow-500"></div>
                     <h3 class="text-lg font-bold text-yellow-400 mb-1">REFULL HB</h3>
-                    <p class="text-[11px] text-gray-400 mb-2 border-b border-gray-700 pb-2 uppercase tracking-wide">Garansi HB Only Tidak Terbatas</p>
-                    <p class="text-xs text-gray-300 leading-relaxed">Garansi sampai ke pembeli seterusnya (Tidak Terbatas) KHUSUS HB ONLY. Hangus apabila: Akun Nabrak, Keban, atau Kebegal moonton.</p>
+                    <p class="text-[11px] text-gray-400 mb-3 border-b border-gray-700 pb-2 uppercase tracking-wide">Garansi HB Only Tidak Terbatas</p>
+                    <div class="text-sm text-gray-300 leading-relaxed space-y-2">
+                        <p>Penjual menggaransikan akunya sampai ke pembeli seterusnya (Tidak Terbatas) dan Garansi ini Khusus HB ONLY.</p>
+                        <p>Garansi ini tidak berlaku lagi, apabila:</p>
+                        <ul class="list-disc pl-5 text-gray-400 space-y-1">
+                            <li>Akun Nabrak/Keban, Akun kebegal moonton</li>
+                        </ul>
+                    </div>
                 </div>
+
+                <!-- REFF PLAYER HB -->
                 <div class="bg-darker p-5 rounded-xl border border-gray-800 hover:border-orange-500/50 transition relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-1 h-full bg-orange-500"></div>
                     <h3 class="text-lg font-bold text-orange-400 mb-1">REFF PLAYER HB</h3>
-                    <p class="text-[11px] text-gray-400 mb-2 border-b border-gray-700 pb-2 uppercase tracking-wide">Garansi HB Only Pembeli Pertama</p>
-                    <p class="text-xs text-gray-300 leading-relaxed">Garansi hanya ke pembeli pertama KHUSUS HB Only. Hangus apabila: Email diubah, dijual ke pembeli ke-2, Nabrak/Keban.</p>
+                    <p class="text-[11px] text-gray-400 mb-3 border-b border-gray-700 pb-2 uppercase tracking-wide">Garansi HB Only ke Pembeli Pertama</p>
+                    <div class="text-sm text-gray-300 leading-relaxed space-y-2">
+                        <p>Penjual menggaransikan akunya hanya ke pembeli pertama & Garansi ini Khusus HB Only.</p>
+                        <p>Garansi ini tidak berlaku lagi, apabila:</p>
+                        <ul class="list-disc pl-5 text-gray-400 space-y-1">
+                            <li>Email monton diubah setelah transaksi DONE</li>
+                            <li>Akun dijual ke pembeli ke-2</li>
+                            <li>Akun Nabrak / keban, Akun kebegal moonton</li>
+                        </ul>
+                    </div>
                 </div>
+
+                <!-- REFF PLAYER HB KE BUYER 1X -->
                 <div class="bg-darker p-5 rounded-xl border border-gray-800 hover:border-indigo-500/50 transition relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-1 h-full bg-indigo-500"></div>
-                    <h3 class="text-lg font-bold text-indigo-400 mb-1">REFF P. HB BUYER 1X</h3>
-                    <p class="text-[11px] text-gray-400 mb-2 border-b border-gray-700 pb-2 uppercase tracking-wide">Garansi HB Only Sampai Pembeli ke-2</p>
-                    <p class="text-xs text-gray-300 leading-relaxed">Garansi sampai ke pembeli ke-2 KHUSUS HB Only. Hangus apabila: Email diubah, dijual ke pembeli ke-3, Nabrak/Keban.</p>
+                    <h3 class="text-lg font-bold text-indigo-400 mb-1">REFF PLAYER HB KE BUYER 1X</h3>
+                    <p class="text-[11px] text-gray-400 mb-3 border-b border-gray-700 pb-2 uppercase tracking-wide">Garansi HB Only Sampai Pembeli ke-2</p>
+                    <div class="text-sm text-gray-300 leading-relaxed space-y-2">
+                        <p>Penjual menggaransikan akunya sampai ke pembeli ke-2 & Garansi ini Khusus HB Only.</p>
+                        <p>Garansi ini tidak berlaku lagi, apabila:</p>
+                        <ul class="list-disc pl-5 text-gray-400 space-y-1">
+                            <li>Email monton diubah setelah transaksi DONE</li>
+                            <li>Akun dijual ke pembeli ke-3 atau seterusnya</li>
+                            <li>Akun Nabrak/ keban, Akun kebegal moonton</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="bg-red-950/20 p-5 rounded-xl border border-red-900/50 md:col-span-2 relative overflow-hidden text-center">
-                    <h3 class="text-lg font-bold text-red-500 mb-1">NOREFF (Tanpa Garansi)</h3>
-                    <p class="text-xs text-gray-300">Penjual tidak menggaransikan akun yang dijual. Jika bermasalah setelah transaksi selesai, diluar tanggung jawab penjual.</p>
+
+                <!-- NOREFF -->
+                <div class="bg-red-950/20 p-5 rounded-xl border border-red-900/50 relative overflow-hidden text-center md:text-left flex flex-col md:flex-row items-center md:items-start gap-4">
+                    <div class="bg-red-500/10 p-3 rounded-full flex-shrink-0 mt-1">
+                        <i class="fa-solid fa-triangle-exclamation text-red-500 text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-red-500 mb-1">NOREFF</h3>
+                        <p class="text-[11px] text-gray-400 mb-2 uppercase tracking-wide">Tanpa Garansi</p>
+                        <p class="text-sm text-gray-300 leading-relaxed">Penjual tidak menggaransikan akun yang dijual. Jika akun bermasalah setelah transaksi selesai, maka diluar tanggung jawab penjual.</p>
+                    </div>
                 </div>
             </div>
-            <p class="text-center text-[10px] md:text-xs text-gray-500 mt-6 italic">
-                *Semua Garansi diatas masih berlaku jika ada kesepakatan lain antara penjual & pembeli secara pribadi.
-            </p>
+            
+            <div class="mt-8 pt-6 border-t border-gray-700">
+                <p class="text-center text-xs text-gray-500 italic">
+                    *Semua Garansi diatas masih berlaku jika ada kesepakatan lain antara penjual & pembeli secara pribadi.
+                </p>
+            </div>
         </section>
     </main>
+
+    <!-- MODAL POPUP GAMBAR (LIGHTBOX) -->
+    <div id="imageModal" class="fixed inset-0 z-[9999] hidden bg-black/90 flex-col items-center justify-center p-4 transition-opacity duration-300 opacity-0" onclick="closeModal(event)">
+        <div class="relative w-full max-w-4xl flex justify-center items-center" onclick="event.stopPropagation()">
+            <!-- Tombol Close Modal -->
+            <button onclick="closeModal(event)" class="absolute -top-12 right-0 md:-right-8 text-white text-4xl hover:text-red-500 transition focus:outline-none">&times;</button>
+            <img id="modalImage" src="" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl scale-95 transition-transform duration-300">
+        </div>
+    </div>
 
     <footer class="mt-12 py-6 text-center text-gray-600 text-xs w-full relative z-10">
         <p>&copy; 2026 KFFS REPORT | Master Ari. All Rights Reserved.</p>
@@ -230,6 +298,40 @@
     <!-- KODE JAVASCRIPT -->
     <script>
         // ==========================================
+        // FITUR MODAL GAMBAR (LIGHTBOX)
+        // ==========================================
+        window.openModal = function(url) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modalImg.src = url;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            // Jeda sejenak untuk memicu animasi transisi Tailwind
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalImg.classList.remove('scale-95');
+                modalImg.classList.add('scale-100');
+            }, 10);
+        }
+
+        window.closeModal = function(e) {
+            if (e) e.stopPropagation();
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            
+            modal.classList.add('opacity-0');
+            modalImg.classList.remove('scale-100');
+            modalImg.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                modalImg.src = '';
+            }, 300); // Sesuaikan dengan durasi transition-opacity Tailwind
+        }
+
+        // ==========================================
         // 1. KONEKSI SUPABASE & CLOUDINARY
         // ==========================================
         const SUPABASE_URL = 'https://eharexosgyuwuilxcvwx.supabase.co'; 
@@ -237,7 +339,7 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dn7ya5fap/image/upload';
-        const CLOUDINARY_UPLOAD_PRESET = 'kffs_report'; // Pastikan sesuai dgn nama Unsigned Preset di Cloudinary
+        const CLOUDINARY_UPLOAD_PRESET = 'kffs_report'; 
 
         // ==========================================
         // 2. NAVIGASI TAB MENU
@@ -296,7 +398,7 @@
         }
 
         // ==========================================
-        // 4. FITUR PENCARIAN (SMART PARSING + UI BARU)
+        // 4. FITUR PENCARIAN
         // ==========================================
         async function searchData() {
             const rawInput = document.getElementById('searchInput').value.trim();
@@ -305,14 +407,11 @@
             if (!rawInput) return resultDiv.innerHTML = `<p class="text-gray-500 text-center text-sm py-4">Silakan masukkan ID atau Nickname terlebih dahulu.</p>`;
             resultDiv.innerHTML = `<p class="text-neon text-center text-sm py-4"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Memindai database KFFS...</p>`;
 
-            // SMART PARSING: Membersihkan (server) dari input user. 
-            // Cth input: "1530076478 (16418)" akan diubah jadi "1530076478" untuk pencocokan.
             let cleanInputForCheck = rawInput;
             if (rawInput.includes('(') && rawInput.includes(')')) {
                 cleanInputForCheck = rawInput.replace(/\s*\([^)]*\)\s*/g, '').trim();
             }
 
-            // DAFTAR HITAM LOKAL (MC Nico Martan)
             const blacklistNicoMartan = [
                 "913219408", "1341822083", "1517665319", "1155558008", "1687285642", 
                 "121191996", "713336645", "184484737", "145397408", "32234305", 
@@ -324,7 +423,6 @@
                 "909223397", "142305475", "18312665", "37780666"
             ];
 
-            // 1. CEK KE DAFTAR MC NICO MARTAN DULU
             if (blacklistNicoMartan.includes(cleanInputForCheck)) {
                 resultDiv.innerHTML = `
                     <div class="flex justify-between items-center bg-darker p-3 md:p-4 rounded-xl border border-red-900 mb-3 shadow-md">
@@ -354,10 +452,9 @@
                         </div>
                     </div>
                 `;
-                return; // Stop pencarian jika sudah ketemu di JSN
+                return;
             }
 
-            // 2. JIKA TIDAK ADA DI JSN, CARI DI DATABASE SUPABASE KFFS
             try {
                 const { data, error } = await supabaseClient
                     .from('reports')
@@ -383,30 +480,29 @@
                             </p>
                         </div>`;
                 } else {
-                    // Header Bar (Menampilkan Jumlah Data)
                     let html = `
                         <div class="flex justify-between items-center bg-darker p-3 md:p-4 rounded-xl border border-red-900 mb-4 shadow-md">
                             <span class="text-gray-300 font-bold text-xs md:text-sm"><i class="fa-solid fa-database mr-2 text-red-500"></i> Hasil Pencarian KFFS</span>
                             <span class="text-red-300 font-bold bg-red-500/20 px-3 py-1 rounded-full text-[10px] md:text-xs border border-red-500/30">${data.length} Data Ditemukan</span>
                         </div>`;
                     
-                    // Meloop/menampilkan setiap card laporan dengan rapi
                     data.forEach(item => {
                         const dateStr = new Date(item.created_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', year: 'numeric'});
                         
                         html += `
                         <div class="bg-darker border border-gray-700 hover:border-red-500/50 transition duration-300 p-4 md:p-5 rounded-2xl flex flex-col md:flex-row gap-4 mb-4 shadow-lg group">
-                            <!-- Bagian Foto -->
-                            <a href="${item.bukti_url}" target="_blank" class="w-full md:w-32 md:h-32 flex-shrink-0 relative overflow-hidden rounded-xl block">
+                            
+                            <!-- Bagian Foto (Terkoneksi ke Modal) -->
+                            <div onclick="openModal('${item.bukti_url}')" class="w-full md:w-32 md:h-32 flex-shrink-0 relative overflow-hidden rounded-xl block cursor-pointer">
                                 <img src="${item.bukti_url}" class="w-full h-40 md:h-full object-cover group-hover:scale-105 transition duration-500" alt="Bukti">
                                 <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
                                     <i class="fa-solid fa-up-right-and-down-left-from-center text-white text-xl"></i>
                                 </div>
-                            </a>
+                            </div>
                             
                             <!-- Bagian Teks & Info -->
                             <div class="flex-1 min-w-0">
-                                <h4 class="text-base md:text-lg font-bold text-white mb-1.5 truncate pr-2">Target: <span class="text-red-400">${item.nickname}</span></h4>
+                                <h4 class="text-base md:text-lg font-bold text-white mb-1.5 break-words">ID/Nick: <span class="text-red-400">${item.nickname}</span></h4>
                                 
                                 <div class="flex flex-wrap items-center gap-2 mb-3">
                                     <span class="text-[10px] md:text-xs text-gray-500"><i class="fa-regular fa-calendar-days mr-1"></i> ${dateStr}</span>
@@ -416,7 +512,8 @@
                                 
                                 <div class="bg-dark p-3 rounded-lg border border-gray-800 text-xs text-gray-300 border-l-2 border-l-gray-600">
                                     <span class="text-gray-500 block mb-1 text-[10px] uppercase font-bold tracking-wider">Kronologi Singkat:</span>
-                                    <div class="line-clamp-3 md:line-clamp-none text-gray-400 leading-relaxed">${item.kasus}</div>
+                                    <!-- Menghapus class line-clamp agar kronologi panjang tidak terpotong -->
+                                    <div class="whitespace-pre-wrap break-words text-gray-400 leading-relaxed">${item.kasus}</div>
                                 </div>
                             </div>
                         </div>`;
@@ -447,10 +544,10 @@
 
             if (error) {
                 showAuthError("Akses Ditolak: " + error.message);
-                btn.disabled = false; btn.innerText = "Masuk";
+                btn.disabled = false; btn.innerText = "Masuk ke Panel";
             } else {
                 errorTxt.classList.add('hidden');
-                btn.disabled = false; btn.innerText = "Masuk";
+                btn.disabled = false; btn.innerText = "Masuk ke Panel";
                 document.getElementById('adminEmail').value = '';
                 document.getElementById('adminPassword').value = '';
                 switchTab('admin-dash');
@@ -494,9 +591,12 @@
                 data.forEach(item => {
                     html += `
                     <div class="bg-dark border border-gray-700 p-4 md:p-5 rounded-xl flex flex-col md:flex-row gap-5 items-center md:items-start shadow-md mb-4">
-                        <a href="${item.bukti_url}" target="_blank" class="w-full md:w-28 md:h-28 flex-shrink-0 block rounded-xl overflow-hidden border border-gray-600 hover:border-blue-500 transition">
-                            <img src="${item.bukti_url}" class="w-full h-32 md:h-full object-cover hover:scale-105 transition">
-                        </a>
+                        <div onclick="openModal('${item.bukti_url}')" class="w-full md:w-28 md:h-28 flex-shrink-0 block rounded-xl overflow-hidden border border-gray-600 hover:border-blue-500 transition cursor-pointer relative group">
+                            <img src="${item.bukti_url}" class="w-full h-32 md:h-full object-cover group-hover:scale-105 transition">
+                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                                <i class="fa-solid fa-expand text-white text-xl"></i>
+                            </div>
+                        </div>
                         <div class="flex-1 w-full text-center md:text-left">
                             <h4 class="font-bold text-white text-base md:text-lg mb-1 truncate">${item.nickname}</h4>
                             <p class="text-xs text-gray-400 mb-3 bg-darker p-3 rounded-lg border border-gray-800 text-left line-clamp-2">${item.kasus}</p>
