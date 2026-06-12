@@ -71,7 +71,7 @@
             <button onclick="switchTab('report')" class="glass-panel text-white py-3 rounded-xl text-sm md:text-lg font-bold hover:bg-red-600 hover:text-white transition neon-border flex flex-col items-center gap-1">
                 <i class="fa-solid fa-triangle-exclamation text-xl"></i> Lapor
             </button>
-            <button onclick="switchTab('admin-login')" class="glass-panel text-white py-3 rounded-xl text-sm md:text-lg font-bold hover:bg-blue-600 hover:text-white transition neon-border flex flex-col items-center gap-1">
+            <button onclick="checkAdminSession()" class="glass-panel text-white py-3 rounded-xl text-sm md:text-lg font-bold hover:bg-blue-600 hover:text-white transition neon-border flex flex-col items-center gap-1">
                 <i class="fa-solid fa-user-shield text-xl"></i> Admin
             </button>
         </div>
@@ -111,14 +111,23 @@
             </form>
         </div>
 
-        <div id="tab-admin-login" class="tab-content glass-panel p-6 md:p-8 rounded-2xl mb-12 text-center max-w-md mx-auto">
-            <h2 class="text-2xl font-bold text-blue-400 mb-4"><i class="fa-solid fa-lock"></i> Akses Admin</h2>
-            <p class="text-sm text-gray-400 mb-6">Masukkan kode rahasia untuk masuk ke panel persetujuan laporan.</p>
-            <input type="password" id="adminPassword" placeholder="Password Admin..." class="w-full bg-darker border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 mb-4 text-center">
-            <button onclick="loginAdmin()" class="w-full bg-blue-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-blue-700 transition">
-                Masuk
-            </button>
-            <p id="adminError" class="text-red-500 text-sm mt-3 hidden">Password Salah!</p>
+        <div id="tab-admin-login" class="tab-content glass-panel p-6 md:p-8 rounded-2xl mb-12 max-w-md mx-auto">
+            <h2 class="text-2xl font-bold text-blue-400 mb-2 text-center"><i class="fa-solid fa-lock"></i> Akses Admin Resmi</h2>
+            <p class="text-xs text-gray-400 mb-6 text-center">Silakan masuk menggunakan Email & Password Admin Supabase.</p>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Email Admin</label>
+                    <input type="email" id="adminEmail" placeholder="email@domain.com" class="w-full bg-darker border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-400 mb-1">Password</label>
+                    <input type="password" id="adminPassword" placeholder="••••••••" class="w-full bg-darker border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500">
+                </div>
+                <button onclick="loginAdmin()" id="btnAdminLogin" class="w-full bg-blue-600 text-white font-bold px-6 py-2.5 rounded-lg hover:bg-blue-700 transition mt-2">
+                    Masuk ke Panel
+                </button>
+                <p id="adminError" class="text-red-500 text-xs text-center hidden mt-2"></p>
+            </div>
         </div>
 
         <div id="tab-admin-dash" class="tab-content glass-panel p-6 md:p-8 rounded-2xl mb-12 border-t-4 border-t-blue-500">
@@ -127,7 +136,7 @@
                 <button onclick="logoutAdmin()" class="bg-red-500 text-white px-3 py-1 rounded text-sm hover:bg-red-600"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button>
             </div>
             <div id="adminDataList" class="space-y-4">
-                <p class="text-gray-400 text-center"><i class="fa-solid fa-spinner fa-spin"></i> Memuat laporan masuk...</p>
+                <p class="text-gray-400 text-center"><i class="fa-solid fa-spinner fa-spin"></i> Memuat antrean laporan masuk...</p>
             </div>
         </div>
 
@@ -228,9 +237,6 @@
         const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dn7ya5fap/image/upload';
         const CLOUDINARY_UPLOAD_PRESET = 'kffs_preset';
 
-        // PASSWORD PANEL ADMIN (Ganti sesukamu)
-        const KATA_SANDI_ADMIN = "masterari77"; 
-
         // ==========================================
         // 2. NAVIGASI TAB MENU
         // ==========================================
@@ -238,6 +244,16 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tabId).classList.add('active');
             if(tabId === 'admin-dash') loadAdminData();
+        }
+
+        // Cek apakah admin sudah login sebelumnya (supaya tidak ketendang saat refresh)
+        async function checkAdminSession() {
+            const { data } = await supabaseClient.auth.getSession();
+            if (data.session) {
+                switchTab('admin-dash');
+            } else {
+                switchTab('admin-login');
+            }
         }
 
         // ==========================================
@@ -261,7 +277,7 @@
                 const cloudRes = await fetch(CLOUDINARY_URL, { method: 'POST', body: formData });
                 const cloudData = await cloudRes.json();
                 
-                if (!cloudData.secure_url) throw new Error("Gagal mengunggah gambar. Pastikan Unsigned Preset Cloudinary sudah benar.");
+                if (!cloudData.secure_url) throw new Error("Gagal mengunggah gambar.");
 
                 loading.innerText = "Mengirim data laporan ke antrean admin...";
                 const { error } = await supabaseClient.from('reports').insert([{ 
@@ -339,20 +355,46 @@
         }
 
         // ==========================================
-        // 5. SISTEM LOGIN & WORKFLOW ADMIN PANEL
+        // 5. SISTEM LOGIN RESMI (SUPABASE AUTH)
         // ==========================================
-        function loginAdmin() {
-            const pass = document.getElementById('adminPassword').value;
-            if(pass === KATA_SANDI_ADMIN) {
-                document.getElementById('adminPassword').value = '';
-                document.getElementById('adminError').classList.add('hidden');
-                switchTab('admin-dash');
+        async function loginAdmin() {
+            const email = document.getElementById('adminEmail').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            const errorTxt = document.getElementById('adminError');
+            const btn = document.getElementById('btnAdminLogin');
+
+            if (!email || !password) {
+                errorTxt.innerText = "Email dan Password wajib diisi!";
+                errorTxt.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "Memverifikasi...";
+
+            // Menghubungi Supabase Auth secara real-time
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+
+            if (error) {
+                errorTxt.innerText = "Login Gagal: " + error.message;
+                errorTxt.classList.remove('hidden');
+                btn.disabled = false;
+                btn.innerText = "Masuk ke Panel";
             } else {
-                document.getElementById('adminError').classList.remove('hidden');
+                errorTxt.classList.add('hidden');
+                btn.disabled = false;
+                btn.innerText = "Masuk ke Panel";
+                document.getElementById('adminEmail').value = '';
+                document.getElementById('adminPassword').value = '';
+                switchTab('admin-dash');
             }
         }
 
-        function logoutAdmin() {
+        async function logoutAdmin() {
+            await supabaseClient.auth.signOut();
             switchTab('admin-login');
         }
 
