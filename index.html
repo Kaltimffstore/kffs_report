@@ -412,18 +412,83 @@
                 cleanInputForCheck = rawInput.replace(/\s*\([^)]*\)\s*/g, '').trim();
             }
 
-            const blacklistNicoMartan = [
-                "913219408", "1341822083", "1517665319", "1155558008", "1687285642", 
-                "121191996", "713336645", "184484737", "145397408", "32234305", 
-                "1245382714", "1849497656", "1747029338", "1905912771", "100047050", 
-                "683111088", "179844538", "24579169", "137122206", "1054156726", 
-                "853610263", "223712431", "1371466596", "216877313", "1120638889", 
-                "183824171", "169432004", "1511128715", "1530076478", "49697610", 
-                "127344656", "29483501", "1512145434", "2046947960", "123254686", 
-                "909223397", "142305475", "18312665", "37780666"
-            ];
+                       const blacklistNicoMartan = {
+                // === Data Lama (39 ID) ===
+                "913219408": "12612",
+                "1341822083": "15524",
+                "1517665319": "16357",
+                "1155558008": "13690",
+                "1687285642": "18152",
+                "121191996": "2604",
+                "713336645": "8843",
+                "184484737": "2931",
+                "145397408": "5029",
+                "32234305": "2050",
+                "1245382714": "15059",
+                "1849497656": "18918",
+                "1747029338": "18422",
+                "1905912771": "19023",
+                "100047050": "5021",
+                "683111088": "8728",
+                "179844538": "2917",
+                "24579169": "2029",
+                "137122206": "2692",
+                "1054156726": "13218",
+                "853610263": "12388",
+                "223712431": "9178",
+                "1371466596": "5025",
+                "216877313": "9109",
+                "1120638889": "13519",
+                "183824171": "-",
+                "169432004": "-",
+                "1511128715": "-",
+                "1530076478": "-",
+                "49697610": "-",
+                "127344656": "-",
+                "29483501": "-",
+                "1512145434": "-",
+                "2046947960": "-",
+                "123254686": "-",
+                "909223397": "-",
+                "142305475": "-",
+                "18312665": "-",
+                "37780666": "-",
 
-            if (blacklistNicoMartan.includes(cleanInputForCheck)) {
+                // === Data Baru Tambahan (25 ID) ===
+                "1464354258": "16104",
+                "14671165": "3203",
+                "1608263801": "16762",
+                "1654729483": "16976",
+                "643444941": "8571",
+                "1440332506": "15980",
+                "650047953": "8581",
+                "144493310": "4038",
+                "146190966": "2735",
+                "1700549253": "18208",
+                "1726637052": "1718",
+                "506738199": "3358",
+                "515104703": "8067",
+                "819791474": "12261",
+                "122722573": "2616",
+                "176007802": "2914",
+                "1690948242": "18177",
+                "207705889": "9072",
+                "296240290": "5047",
+                "112053999": "2568",
+                "431746195": "9942",
+                "1784109992": "18620",
+                "60444155": "2108",
+                "239606027": "9246",
+                "2103828239": "19848"
+            };
+
+            const serverInfo = blacklistNicoMartan[cleanInputForCheck];
+
+            if (serverInfo) {
+                const serverDisplay = serverInfo !== "-" 
+                    ? `<span class="text-yellow-300">Server: ${serverInfo}</span>` 
+                    : `<span class="text-gray-500">Server: -</span>`;
+
                 resultDiv.innerHTML = `
                     <div class="flex justify-between items-center bg-darker p-3 md:p-4 rounded-xl border border-red-900 mb-3 shadow-md">
                         <span class="text-gray-300 font-bold text-xs md:text-sm"><i class="fa-solid fa-server mr-2 text-red-500"></i> Hasil Pencarian Global</span>
@@ -439,10 +504,15 @@
                         </div>
                         <div class="flex-1 text-center md:text-left z-10 w-full">
                             <h3 class="text-lg md:text-xl font-bold text-white mb-1 truncate">ID/Nick: <span class="text-red-400">${rawInput}</span></h3>
-                            <p class="text-gray-400 text-xs md:text-sm mb-3">Akun ini masuk dalam daftar hitam pelaku penipuan / ripper.</p>
+                            <p class="text-gray-400 text-xs md:text-sm mb-2">Akun ini masuk dalam daftar hitam pelaku penipuan / ripper.</p>
                             
-                            <div class="inline-block bg-blue-600/10 border border-blue-500/50 px-3 py-1.5 rounded-lg mb-2">
-                                <span class="text-blue-400 font-bold text-[10px] md:text-xs tracking-wide"><i class="fa-solid fa-certificate mr-1"></i> Terverifikasi Oleh: MC Besar Nico Martan</span>
+                            <div class="flex flex-wrap gap-2 mb-3">
+                                <div class="inline-block bg-blue-600/10 border border-blue-500/50 px-3 py-1.5 rounded-lg">
+                                    <span class="text-blue-400 font-bold text-[10px] md:text-xs tracking-wide"><i class="fa-solid fa-certificate mr-1"></i> Terverifikasi Oleh: MC Besar Nico Martan</span>
+                                </div>
+                                <div class="inline-block bg-yellow-600/10 border border-yellow-500/50 px-3 py-1.5 rounded-lg">
+                                    <span class="text-yellow-400 font-bold text-[10px] md:text-xs tracking-wide"><i class="fa-solid fa-server mr-1"></i> ${serverDisplay}</span>
+                                </div>
                             </div>
                             
                             <div class="bg-dark p-3 rounded-lg border border-gray-800 text-xs text-gray-400 text-left mt-2 border-l-2 border-l-red-500">
