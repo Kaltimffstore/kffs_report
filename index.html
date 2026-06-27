@@ -159,9 +159,36 @@
         <!-- TAB 4: ADMIN DASHBOARD -->
         <div id="tab-admin-dash" class="tab-content glass-panel p-5 md:p-8 rounded-2xl mb-12 border-t-2 border-t-blue-500 shadow-2xl">
             <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
-                <h2 class="text-lg md:text-2xl font-bold text-blue-400"><i class="fa-solid fa-user-gear"></i> Panel Admin (Pending Reports)</h2>
+                <h2 class="text-lg md:text-2xl font-bold text-blue-400"><i class="fa-solid fa-user-gear"></i> Panel Admin</h2>
                 <button onclick="logoutAdmin()" class="bg-red-500/20 border border-red-500 text-red-400 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-red-600 hover:text-white transition"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button>
             </div>
+
+            <!-- FITUR BARU: INPUT MANUAL SIMPLE (NICO MARTAN MODE) -->
+            <div class="bg-darker border border-yellow-500/30 p-5 rounded-xl mb-8 shadow-lg">
+                <div class="flex items-center gap-2 mb-2">
+                    <i class="fa-solid fa-bolt text-yellow-400 text-xl"></i>
+                    <h3 class="text-sm md:text-base font-bold text-yellow-400 uppercase tracking-wide">Input Data Manual Cepat</h3>
+                </div>
+                <p class="text-xs text-gray-400 mb-5">Tambahkan ID langsung ke index pencarian (Mode Simple). Tidak perlu lampiran bukti, otomatis ditandai *"Terverifikasi admin+nico martan(jns)"*.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase">ID / Nickname / No WA</label>
+                        <input type="text" id="manualId" placeholder="Contoh: 1234567890" class="w-full bg-dark border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:border-yellow-500 text-sm focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 mb-1.5 uppercase">Tanggal Kejadian</label>
+                        <input type="date" id="manualDate" class="w-full bg-dark border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:border-yellow-500 text-sm focus:outline-none text-gray-300">
+                    </div>
+                </div>
+                <button onclick="submitManualData()" id="btnManualSubmit" class="w-full bg-yellow-600/20 border border-yellow-500 text-yellow-400 font-bold px-6 py-3 rounded-lg hover:bg-yellow-500 hover:text-dark transition shadow-md flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-database"></i> Masukkan ke Index Publik
+                </button>
+            </div>
+
+            <div class="border-b border-gray-700 mb-6"></div>
+
+            <h3 class="text-sm font-bold text-blue-400 mb-4"><i class="fa-solid fa-list-check mr-2"></i>Antrean Laporan Publik (Pending Reports)</h3>
             <div id="adminDataList" class="space-y-4">
                 <p class="text-gray-400 text-center text-sm py-4"><i class="fa-solid fa-spinner fa-spin"></i> Memuat antrean laporan masuk...</p>
             </div>
@@ -412,7 +439,7 @@
                 cleanInputForCheck = rawInput.replace(/\s*\([^)]*\)\s*/g, '').trim();
             }
 
-                       const blacklistNicoMartan = {
+            const blacklistNicoMartan = {
                 // === Data Lama (39 ID) ===
                 "913219408": "12612",
                 "1341822083": "15524",
@@ -582,7 +609,6 @@
                                 
                                 <div class="bg-dark p-3 rounded-lg border border-gray-800 text-xs text-gray-300 border-l-2 border-l-gray-600">
                                     <span class="text-gray-500 block mb-1 text-[10px] uppercase font-bold tracking-wider">Kronologi Singkat:</span>
-                                    <!-- Menghapus class line-clamp agar kronologi panjang tidak terpotong -->
                                     <div class="whitespace-pre-wrap break-words text-gray-400 leading-relaxed">${item.kasus}</div>
                                 </div>
                             </div>
@@ -694,6 +720,54 @@
             if(!confirm("Laporan akan dihapus PERMANEN. Lanjutkan?")) return;
             const { error } = await supabaseClient.from('reports').delete().eq('id', id);
             if(error) alert("Error: " + error.message); else loadAdminData();
+        }
+
+        // ==========================================
+        // 6. FITUR BARU: INPUT DATA MANUAL (ADMIN)
+        // ==========================================
+        async function submitManualData() {
+            const idInput = document.getElementById('manualId').value.trim();
+            const dateInput = document.getElementById('manualDate').value;
+            const btn = document.getElementById('btnManualSubmit');
+
+            if (!idInput || !dateInput) {
+                alert("Harap isi ID/Nickname dan Tanggal Kejadian!");
+                return;
+            }
+
+            // Format tanggal jadi lebih enak dibaca (opsional)
+            const dateObj = new Date(dateInput);
+            const formattedDate = dateObj.toLocaleDateString('id-ID', {day: '2-digit', month: 'long', year: 'numeric'});
+
+            // Format deskripsi sesuai instruksi
+            const kasusText = `Kejadian pada tanggal: ${formattedDate}\n\nTerverifikasi admin+nico martan(jns)`;
+            
+            // Gunakan gambar placeholder verifikasi karena tidak butuh lampiran bukti
+            const defaultImageUrl = "https://placehold.co/600x400/0b0f19/10b981?text=Verifikasi+Manual%5CnAdmin+%2B+Nico+Martan";
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengirim ke Index...';
+
+            try {
+                // Insert dengan status langsung 'approved' agar ter-index tanpa antrean
+                const { error } = await supabaseClient.from('reports').insert([{ 
+                    nickname: idInput, 
+                    kasus: kasusText, 
+                    bukti_url: defaultImageUrl,
+                    status: 'approved' 
+                }]);
+
+                if (error) throw error;
+
+                alert("Data berhasil masuk ke Index Publik!\nStatus otomatis 'Approved'.");
+                document.getElementById('manualId').value = '';
+                document.getElementById('manualDate').value = '';
+            } catch (err) {
+                alert("Gagal menambahkan data: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-database mr-2"></i> Masukkan ke Index Publik';
+            }
         }
     </script>
 </body>
